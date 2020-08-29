@@ -1,0 +1,53 @@
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Broadcast</title>
+</head>
+
+<body>
+	<input id="input" />
+	<div id="app1"></div>
+	<div id="app2"></div>
+	<div id="app3"></div>
+
+	<script src="js/event.js"></script>
+	<script>
+		let input = document.getElementById('input');
+		let app1 = document.getElementById('app1');
+		let app2 = document.getElementById('app2');
+		let app3 = document.getElementById('app3');
+		let emitter = new EventEmitter();
+
+		emitter.create("onCounterIncrement", (value) => {
+			return value * 2;
+		});
+
+		emitter.create("onCounterIncrement2", (value) => {
+			return value * 2;
+		});
+
+		emitter.create("outputCounter", (value) => {
+			return `Value is ${value*4}`;
+		});
+
+		emitter.subscribe("onCounterIncrement", app1);
+
+		emitter.subscribe("onCounterIncrement", app2, (output) => {
+			return output * 2;
+		});
+		// emitter.subscribe("onCounterIncrement2", app2, (output) => {
+		// 	return output;
+		// });
+		emitter.subscribe("outputCounter", app3);
+
+		input.oninput = function () {
+			// emitter.publish("onCounterIncrement", this.value);
+			// emitter.chain(["onCounterIncrement", "onCounterIncrement2", "outputCounter"], this.value);
+			emitter.chain(["onCounterIncrement", "outputCounter"], this.value);
+		}
+	</script>
+</body>
+
+</html>
